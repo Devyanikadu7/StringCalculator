@@ -10,7 +10,14 @@ public class StringCalculator {
 		String numbers="";
 		System.out.println("Enter String of numbers:");
 		Scanner scanner=new Scanner(System.in);
-		numbers=scanner.nextLine();
+		while(true)
+		{
+			String line=scanner.nextLine();
+			if(line.trim().isEmpty())
+				break;
+			numbers+=line+"\n";
+		}
+		scanner.close();
 		int sum=Add(numbers);
 		System.out.println("Sum:"+sum);
 
@@ -22,9 +29,9 @@ public class StringCalculator {
 			return 0;
 		else
 		{
-			List<String> number=Arrays.asList(numbers.split(","));
+			List<String> number=Arrays.asList(numbers.replace("\n", ",").split(","));
 			for(String i:number)
-				result=result+Integer.parseInt(i);		
+				result=result+Integer.parseInt(i);	
 		}
 		return result;
 	}
