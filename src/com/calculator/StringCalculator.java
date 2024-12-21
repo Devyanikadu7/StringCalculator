@@ -29,9 +29,21 @@ public class StringCalculator {
 			return 0;
 		else
 		{
+			if(numbers.contains("//"))
+			{
+				int index=numbers.indexOf("//");
+				String delimiter=numbers.substring(index+2,index+3);
+				numbers=numbers.substring(index+4);
+				List<String> number=Arrays.asList(numbers.replace("\n", delimiter).split("\\"+delimiter));
+				for(String i:number)
+				result=result+Integer.parseInt(i);		
+			}
+			else
+			{
 			List<String> number=Arrays.asList(numbers.replace("\n", ",").split(","));
 			for(String i:number)
 				result=result+Integer.parseInt(i);	
+			}
 		}
 		return result;
 	}
