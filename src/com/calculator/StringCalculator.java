@@ -7,19 +7,20 @@ import java.util.Scanner;
 public class StringCalculator {
 
 	public static void main(String[] args) {
-		String numbers="";
-		System.out.println("Enter String of numbers:");
-		Scanner scanner=new Scanner(System.in);
-		while(true)
-		{
-			String line=scanner.nextLine();
-			if(line.trim().isEmpty())
-				break;
-			numbers+=line+"\n";
-		}
-		scanner.close();
-		int sum=Add(numbers);
-		System.out.println("Sum:"+sum);
+		
+			String numbers="";
+			System.out.println("Enter String of numbers:");
+			Scanner scanner=new Scanner(System.in);
+			while(true)
+			{
+				String line=scanner.nextLine();
+				if(line.trim().isEmpty())
+					break;
+				numbers+=line+"\n";
+			}
+			scanner.close();
+			int sum=Add(numbers);
+			System.out.println("Sum:"+sum);
 
 	}
 
@@ -35,9 +36,18 @@ public class StringCalculator {
 			{
 				
 				int index=numbers.indexOf("//");
-				String delimiter=numbers.substring(index+2,index+3);
-				numbers=numbers.substring(index+4);
-				List<String> number=Arrays.asList(numbers.replace("\n", delimiter).split("\\"+delimiter));
+				int newLineIndex=numbers.indexOf("\n");
+				
+				String delimiter=numbers.substring(index+2,newLineIndex);
+				numbers = numbers.substring(newLineIndex + 1).trim().replace("\n", delimiter);
+				
+				String regex = "(\\d+" + java.util.regex.Pattern.quote(delimiter) + ")*\\d+";
+			        if (!numbers.matches(regex)) {
+			            throw new IllegalArgumentException("Input does not strictly adhere to the specified delimiter: " + delimiter);
+			        }
+				
+				List<String> number=Arrays.asList(numbers.split(java.util.regex.Pattern.quote(delimiter)));
+				
 				for(String i:number)
 				{
 					int num=Integer.parseInt(i);
