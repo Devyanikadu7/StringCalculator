@@ -35,13 +35,16 @@ public class StringCalculator {
 			return 0;
 		else
 		{
+			List<String> number=new ArrayList<>();
+			
+			//If the string of numbers contain delimiters like //**
 			if(numbers.contains("//"))
 			{
 				int index=numbers.indexOf("//");
 				int newLineIndex=numbers.indexOf("\n");
 				String delimiter=numbers.substring(index+2,newLineIndex);
-				List<String> number=new ArrayList<>();
-				
+			
+				//If the string of numbers contain multiple delimiters like //[*][?]
 				if(delimiter.contains("[") && delimiter.contains("]"))
 				{
 					Pattern pattern = Pattern.compile("\\[(.*?)]");
@@ -59,49 +62,30 @@ public class StringCalculator {
                             .orElse("");
 			      
 			        numbers = numbers.substring(newLineIndex + 1).trim();
-			        String validationRegex = "^(\\d+(" + regex + ")?)+$";
+			        String validationRegex = "^(\\-?\\d+(" + regex + ")?)+$";
 			        if (!numbers.matches(validationRegex)) {
 			            throw new IllegalArgumentException("Input contains unsupported delimiters.");
 			        }
 			        number=Arrays.asList(numbers.split(regex));
 			        
 				}
+				//If the string of numbers contain only one delimiter of any length like //***
 				else
 				{
 					numbers = numbers.substring(newLineIndex + 1).trim().replace("\n", delimiter);
 					
-					String regex = "(\\d+" + java.util.regex.Pattern.quote(delimiter) + ")*\\d+";
+					String regex = "(\\-?\\d+" + java.util.regex.Pattern.quote(delimiter) + ")*\\-?\\d+";
 				        if (!numbers.matches(regex)) {
 				            throw new IllegalArgumentException("Input does not strictly adhere to the specified delimiter: " + delimiter);
 				        }
 					
 				     number=Arrays.asList(numbers.split(java.util.regex.Pattern.quote(delimiter)));
-				}
-					for(String i:number)
-					{
-						int num=Integer.parseInt(i);
-						if (num < 0) {
-			                if (foundNegative) {
-			                    negativeNumbers.append(", ").append(num);
-			                } else {
-			                    negativeNumbers.append(num);
-			                    foundNegative = true;
-			                }
-						}
-						else
-						{
-							if(num>1000)
-								continue;
-							else
-								result+=num;		
-						}
-					}	
-				
+				}	
 			}
+			//If the string of numbers doesn't contain any delimiters other than ,
 			else
-			{
-		
-			List<String> number=Arrays.asList(numbers.replace("\n", ",").split(","));
+			number=Arrays.asList(numbers.replace("\n", ",").split(","));
+			
 			for(String i:number)
 			{
 				int num=Integer.parseInt(i);
@@ -120,7 +104,6 @@ public class StringCalculator {
 					else
 						result+=num;	
 				}
-			}
 			}
 		}
 		if (foundNegative) {
