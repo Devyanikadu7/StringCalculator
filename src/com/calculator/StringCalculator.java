@@ -25,26 +25,57 @@ public class StringCalculator {
 
 	private static int Add(String numbers) {
 		int result=0;
+		StringBuilder negativeNumbers = new StringBuilder();
+		boolean foundNegative = false;
 		if(numbers.isEmpty())
 			return 0;
 		else
 		{
 			if(numbers.contains("//"))
 			{
+				
 				int index=numbers.indexOf("//");
 				String delimiter=numbers.substring(index+2,index+3);
 				numbers=numbers.substring(index+4);
 				List<String> number=Arrays.asList(numbers.replace("\n", delimiter).split("\\"+delimiter));
 				for(String i:number)
-				result=result+Integer.parseInt(i);		
+				{
+					int num=Integer.parseInt(i);
+					if (num < 0) {
+		                if (foundNegative) {
+		                    negativeNumbers.append(", ").append(num);
+		                } else {
+		                    negativeNumbers.append(num);
+		                    foundNegative = true;
+		                }
+					}
+					else
+						result+=num;		     
+				}	
 			}
 			else
 			{
+		
 			List<String> number=Arrays.asList(numbers.replace("\n", ",").split(","));
 			for(String i:number)
-				result=result+Integer.parseInt(i);	
+			{
+				int num=Integer.parseInt(i);
+				if (num < 0) {
+	                if (foundNegative) {
+	                    negativeNumbers.append(", ").append(num);
+	                } else {
+	                    negativeNumbers.append(num);
+	                    foundNegative = true;
+	                }
+				}
+				else
+					result+=num;
+			}
 			}
 		}
+		if (foundNegative) {
+	        throw new RuntimeException("Negative numbers not allowed: " + negativeNumbers);
+	    }
 		return result;
 	}
 
