@@ -50,7 +50,12 @@ public class StringCalculator {
 		                }
 					}
 					else
-						result+=num;		     
+					{
+						if(num>1000)
+							continue;
+						else
+							result+=num;		
+					}
 				}	
 			}
 			else
@@ -69,7 +74,12 @@ public class StringCalculator {
 	                }
 				}
 				else
-					result+=num;
+				{
+					if(num>1000)
+						continue;
+					else
+						result+=num;	
+				}
 			}
 			}
 		}
