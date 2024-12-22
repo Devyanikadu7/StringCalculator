@@ -1,8 +1,11 @@
 package com.calculator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringCalculator {
 
@@ -34,39 +37,66 @@ public class StringCalculator {
 		{
 			if(numbers.contains("//"))
 			{
-				
 				int index=numbers.indexOf("//");
 				int newLineIndex=numbers.indexOf("\n");
-				
 				String delimiter=numbers.substring(index+2,newLineIndex);
-				numbers = numbers.substring(newLineIndex + 1).trim().replace("\n", delimiter);
+				List<String> number=new ArrayList<>();
 				
-				String regex = "(\\d+" + java.util.regex.Pattern.quote(delimiter) + ")*\\d+";
-			        if (!numbers.matches(regex)) {
-			            throw new IllegalArgumentException("Input does not strictly adhere to the specified delimiter: " + delimiter);
-			        }
-				
-				List<String> number=Arrays.asList(numbers.split(java.util.regex.Pattern.quote(delimiter)));
-				
-				for(String i:number)
+				if(delimiter.contains("[") && delimiter.contains("]"))
 				{
-					int num=Integer.parseInt(i);
-					if (num < 0) {
-		                if (foundNegative) {
-		                    negativeNumbers.append(", ").append(num);
-		                } else {
-		                    negativeNumbers.append(num);
-		                    foundNegative = true;
-		                }
-					}
-					else
+					Pattern pattern = Pattern.compile("\\[(.*?)]");
+			        Matcher matcher = pattern.matcher(delimiter);
+
+			        List<String> delimiters = new ArrayList<>();
+			        while (matcher.find()) {
+			            delimiters.add(matcher.group(1)); 
+			        }
+			        delimiters.add("\n");
+			        
+			        String regex = delimiters.stream()
+                            .map(Pattern::quote) 
+                            .reduce((d1, d2) -> d1 + "|" + d2) 
+                            .orElse("");
+			      
+			        numbers = numbers.substring(newLineIndex + 1).trim();
+			        String validationRegex = "^(\\d+(" + regex + ")?)+$";
+			        if (!numbers.matches(validationRegex)) {
+			            throw new IllegalArgumentException("Input contains unsupported delimiters.");
+			        }
+			        number=Arrays.asList(numbers.split(regex));
+			        
+				}
+				else
+				{
+					numbers = numbers.substring(newLineIndex + 1).trim().replace("\n", delimiter);
+					
+					String regex = "(\\d+" + java.util.regex.Pattern.quote(delimiter) + ")*\\d+";
+				        if (!numbers.matches(regex)) {
+				            throw new IllegalArgumentException("Input does not strictly adhere to the specified delimiter: " + delimiter);
+				        }
+					
+				     number=Arrays.asList(numbers.split(java.util.regex.Pattern.quote(delimiter)));
+				}
+					for(String i:number)
 					{
-						if(num>1000)
-							continue;
+						int num=Integer.parseInt(i);
+						if (num < 0) {
+			                if (foundNegative) {
+			                    negativeNumbers.append(", ").append(num);
+			                } else {
+			                    negativeNumbers.append(num);
+			                    foundNegative = true;
+			                }
+						}
 						else
-							result+=num;		
-					}
-				}	
+						{
+							if(num>1000)
+								continue;
+							else
+								result+=num;		
+						}
+					}	
+				
 			}
 			else
 			{
